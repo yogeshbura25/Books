@@ -1,3 +1,7 @@
 GET http://localhost:3000/books/
 
+#get books based on book id's
 GET http://localhost:3000/books/5/
+
+#get books rating
+GET http://localhost:3000/ratings/4.48/books

@@ -25,21 +25,54 @@ const initializeDBAndServer = async () => {
 
 initializeDBAndServer();
 
+// API Get all books
 app.get("/books/", async (request, response) => {
   const selectBooks = `
-    SELECT * FROM book ORDER BY book_id;`;
+    SELECT 
+    *
+    FROM 
+    book;`;
   const selectQuery = await db.all(selectBooks);
   response.send(selectQuery);
 });
 
+// API Get books from specific range
+app.get("/books/", async (request, response) => {
+  const {
+    offset = 2,
+    limit = 5,
+    order = "ASC",
+    order_by = "book_id",
+    search_q = "",
+  } = request.query;
+  const getBooksQuery = `
+    SELECT
+      *
+    FROM
+     book
+    WHERE
+     title LIKE '%${search_q}%'
+    ORDER BY ${order_by} ${order}
+    LIMIT ${limit} OFFSET ${offset};`;
+  const booksArray = await db.all(getBooksQuery);
+  response.send(booksArray);
+});
+
+// API get book through ID
 app.get("/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const getBook = `
-    SELECT * FROM book WHERE book_id = ${bookId};`;
+    SELECT 
+    * 
+    FROM 
+    book 
+    WHERE 
+    book_id = ${bookId};`;
   const book = await db.get(getBook);
   response.send(book);
 });
 
+// API Get book through authorID
 app.get("/authors/:authorId/books/", async (request, response) => {
   const { authorId } = request.params;
   const getAuthorBooksQuery = `
@@ -53,14 +86,21 @@ app.get("/authors/:authorId/books/", async (request, response) => {
   response.send(booksArray);
 });
 
+// API Get ratings of Books
 app.get("/ratings/:rating/books", async (request, response) => {
   const { rating } = request.params;
   const getRatingMoreThan = `
-    SELECT * FROM book WHERE rating = ?;`;
+    SELECT 
+    * 
+    FROM 
+    book 
+    WHERE 
+    rating = ?;`;
   const ratingsNo = await db.all(getRatingMoreThan, [rating]);
   response.send(ratingsNo);
 });
 
+// API Added Book
 app.post("/books/", (request, response) => {
   const bookDetails = request.body;
   const {
@@ -98,6 +138,7 @@ app.post("/books/", (request, response) => {
   response.send({ bookId: bookId });
 });
 
+// API Update book
 app.put("/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const bookDetails = request.body;
@@ -135,10 +176,12 @@ app.put("/books/:bookId/", async (request, response) => {
   response.send("Book Updated Successfully");
 });
 
+// API delete book
 app.delete("/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const deleteBookQuery = `
-    DELETE FROM
+    DELETE 
+    FROM
       book
     WHERE
       book_id = ${bookId};`;
