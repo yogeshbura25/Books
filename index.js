@@ -1,8 +1,10 @@
 const express = require("express");
 const path = require("path");
-const { open } = require("sqlite");
 
+const { open } = require("sqlite");
 const sqlite3 = require("sqlite3");
+
+const bcrypt = require("bcrypt");
 
 const app = express();
 app.use(express.json());
@@ -187,4 +189,61 @@ app.delete("/books/:bookId/", async (request, response) => {
       book_id = ${bookId};`;
   await db.run(deleteBookQuery);
   response.send("Book Deleted Successfully");
+});
+
+// Register New User API
+app.post("/users/", async (request, response) => {
+  const { name, username, password, gender, location } = request.body;
+  const hashedPassword = await bcrypt.hash(request.body.password, 10);
+  const selectUser = `
+    SELECT 
+    *
+    FROM
+    user
+    WHERE 
+    username = '${username}'`;
+  const dbUser = await db.get(selectUser);
+  if (dbUser === undefined) {
+    const newUser = `
+        INSERT INTO
+        user (name, username, password, gender, location)
+        VALUES (
+            '${name}',
+            '${username}',
+            '${hashedPassword}',
+            '${gender}',
+            '${location}'
+            )`;
+    const dbResponse = await db.run(newUser);
+    const newUserId = dbResponse.lastID;
+    response.send(`Created new user with ${newUserId}`);
+  } else {
+    response.status = 400;
+    response.send("User already exists");
+  }
+});
+
+// Login User API
+app.post("/login", async (request, response) => {
+  const { username, password } = request.body;
+  const selectUser = `
+    SELECT 
+    *
+    FROM
+    user
+    WHERE 
+    username = '${username}'`;
+  const dbUser = await db.get(selectUser);
+  if (dbUser === undefined) {
+    response.status = 400;
+    response.send("Invalid User");
+  } else {
+    const isPasswordMatched = await bcrypt.hash(password === dbUser.password);
+    if (isPasswordMatched === true) {
+      response.send("Login Success!");
+    } else {
+      response.status = 400;
+      response.send("Invalid User");
+    }
+  }
 });
