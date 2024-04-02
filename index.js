@@ -18,7 +18,10 @@ const initializeDBAndServer = async () => {
       filename: dbPath,
       driver: sqlite3.Database,
     });
-    app.listen(3000);
+    console.log("Database connected successfully!");
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
   } catch (e) {
     console.log(`DB Error: ${e.message}`);
     process.exit(1);
@@ -103,7 +106,7 @@ app.get("/ratings/:rating/", async (request, response) => {
 });
 
 // API Added Book
-app.post("/books/post/", (request, response) => {
+app.post("/books/post/", async (request, response) => {
   const bookDetails = request.body;
   const {
     title,
@@ -135,7 +138,7 @@ app.post("/books/post/", (request, response) => {
          ${price},
         '${onlineStores}'
       );`;
-  const dbResponse = db.run(addBookQuery);
+  const dbResponse = await db.run(addBookQuery);
   const bookId = dbResponse.lastID;
   response.send({ bookId: bookId });
 });
@@ -235,15 +238,13 @@ app.post("/login", async (request, response) => {
     username = '${username}'`;
   const dbUser = await db.get(selectUser);
   if (dbUser === undefined) {
-    response.status = 400;
-    response.send("Invalid User");
+    response.status(400).send("Invalid User");
   } else {
-    const isPasswordMatched = await bcrypt.hash(password === dbUser.password);
-    if (isPasswordMatched === true) {
+    const isPasswordMatched = await bcrypt.compare(password, dbUser.password);
+    if (isPasswordMatched) {
       response.send("Login Success!");
     } else {
-      response.status = 400;
-      response.send("Invalid User");
+      response.status(400).send("Invalid Password");
     }
   }
 });
