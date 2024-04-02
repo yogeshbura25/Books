@@ -28,7 +28,7 @@ const initializeDBAndServer = async () => {
 initializeDBAndServer();
 
 // API Get all books
-app.get("/books", async (request, response) => {
+app.get("/", async (request, response) => {
   const selectBooks = `
     SELECT 
     *
