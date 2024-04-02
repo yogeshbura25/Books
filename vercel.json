@@ -2,17 +2,49 @@
     "version": 2,
     "routes": [
       {
-        "src": "/(.*)",
-        "dest": "server.js"
+        "src": "/books",
+        "methods": ["GET"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/books/",
+        "methods": ["GET"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/books/:bookId/",
+        "methods": ["GET"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/authors/:authorId/",
+        "methods": ["GET"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/ratings/:rating/",
+        "methods": ["GET"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/books/post/",
+        "methods": ["POST"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/update/books/:bookId/",
+        "methods": ["PUT"],
+        "dest": "index.js"
+      },
+      {
+        "src": "/delete/books/:bookId/",
+        "methods": ["DELETE"],
+        "dest": "index.js"
       }
     ],
-    "env": {
-      "NODE_ENV": "production",
-      "PORT": 3000
-    },
     "builds": [
       {
-        "src": "./index.js",
+        "src": "index.js",
         "use": "@vercel/node"
       }
     ]

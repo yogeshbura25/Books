@@ -75,7 +75,7 @@ app.get("/books/:bookId/", async (request, response) => {
 });
 
 // API Get book through authorID
-app.get("/authors/:authorId/books/", async (request, response) => {
+app.get("/authors/:authorId/", async (request, response) => {
   const { authorId } = request.params;
   const getAuthorBooksQuery = `
     SELECT
@@ -89,7 +89,7 @@ app.get("/authors/:authorId/books/", async (request, response) => {
 });
 
 // API Get ratings of Books
-app.get("/ratings/:rating/books", async (request, response) => {
+app.get("/ratings/:rating/", async (request, response) => {
   const { rating } = request.params;
   const getRatingMoreThan = `
     SELECT 
@@ -103,7 +103,7 @@ app.get("/ratings/:rating/books", async (request, response) => {
 });
 
 // API Added Book
-app.post("/books/", (request, response) => {
+app.post("/books/post/", (request, response) => {
   const bookDetails = request.body;
   const {
     title,
@@ -141,7 +141,7 @@ app.post("/books/", (request, response) => {
 });
 
 // API Update book
-app.put("/books/:bookId/", async (request, response) => {
+app.put("/update/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const bookDetails = request.body;
   const {
@@ -179,7 +179,7 @@ app.put("/books/:bookId/", async (request, response) => {
 });
 
 // API delete book
-app.delete("/books/:bookId/", async (request, response) => {
+app.delete("/delete/books/:bookId/", async (request, response) => {
   const { bookId } = request.params;
   const deleteBookQuery = `
     DELETE 
