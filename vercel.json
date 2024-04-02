@@ -7,11 +7,6 @@
         "dest": "index.js"
       },
       {
-        "src": "/books/",
-        "methods": ["GET"],
-        "dest": "index.js"
-      },
-      {
         "src": "/books/:bookId/",
         "methods": ["GET"],
         "dest": "index.js"
